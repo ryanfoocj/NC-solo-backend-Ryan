@@ -5,7 +5,7 @@ const {
   psqlErrorHandler,
   handler404,
   handlesInternalErr,
-} = require("./errors");
+} = require("./errorhandling");
 const { getTopics, getArticleById } = require("./controllers");
 
 app.get("/api/topics", getTopics);
