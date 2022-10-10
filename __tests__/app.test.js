@@ -15,6 +15,7 @@ describe("app", () => {
           .get("/api/topics")
           .expect(200)
           .then((response) => {
+            expect(Array.isArray(response.body)).toBe(true);
             expect(response.body.length).toBe(3);
             response.body.forEach((topic) => {
               expect(typeof topic).toBe("object");
@@ -42,21 +43,51 @@ describe("app", () => {
   });
 });
 
-/* describe("app", () => {
+describe("app", () => {
   describe("/api", () => {
     describe("GET: /api/articles/:article_id", () => {
-      describe("200: should return an array of objects", () => {
+      test("200: should return an article that matches test data", () => {
         return request(app)
           .get("/api/articles/1")
           .expect(200)
           .then((response) => {
-            expect(Array.isArray(response)).toBe(true);
-            response.body.forEach((article) => {
-              expect(typeof topic).toBe("object");
-              expect(Array.isArray(topic)).toBe(false);
+            const article = response.body[0];
+            expect(response.body.length).toBe(1);
+            expect(Array.isArray(article)).toBe(false);
+            expect(typeof article).toBe("object");
+            expect(article).toEqual({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
             });
+          });
+      });
+      test("400: should handle a bad request and return appropriate message", () => {
+        return request(app)
+          .get("/api/articles/bird")
+          .expect(400)
+          .then((response) => {
+            const {
+              body: { msg },
+            } = response;
+            expect(msg).toBe("400 Bad Request!");
+          });
+      });
+      test("404: non existent resource should return appropriate message", () => {
+        return request(app)
+          .get("/api/articles/99999")
+          .expect(404)
+          .then((response) => {
+            const {
+              body: { msg },
+            } = response;
+            expect(msg).toBe("No article found for article_id: 99999");
           });
       });
     });
   });
-}); */
+});
