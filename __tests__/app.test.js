@@ -15,7 +15,6 @@ describe("app", () => {
           .get("/api/topics")
           .expect(200)
           .then((response) => {
-            expect(Array.isArray(response.body)).toBe(true);
             expect(response.body.length).toBe(3);
             response.body.forEach((topic) => {
               expect(typeof topic).toBe("object");
@@ -86,6 +85,41 @@ describe("app", () => {
               body: { msg },
             } = response;
             expect(msg).toBe("No article found for article_id: 99999");
+          });
+      });
+    });
+  });
+});
+
+describe("app", () => {
+  describe("/api", () => {
+    describe("GET: /api/users", () => {
+      test("200: should return an array of objects containing users that match test data", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then((response) => {
+            expect(response.body.length).toBe(4);
+            response.body.forEach((user) => {
+              expect(Array.isArray(user)).toBe(false);
+              expect(typeof user).toBe("object");
+              expect(user).toEqual({
+                username: expect.any(String),
+                name: expect.any(String),
+                avatar_url: expect.any(String),
+              });
+            });
+          });
+      });
+      test("404 if there is a reference error or typo, returns error message", () => {
+        return request(app)
+          .get("/api/useless")
+          .expect(404)
+          .then((response) => {
+            const {
+              body: { msg },
+            } = response;
+            expect(msg).toBe("404 Route Not Found!");
           });
       });
     });
