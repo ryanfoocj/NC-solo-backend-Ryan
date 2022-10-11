@@ -27,4 +27,25 @@ exports.fetchUsers = () => {
   });
 };
 
-exports.updateArticle = () => {};
+exports.updateArticle = (id, votes) => {
+  if (!votes) {
+    return Promise.reject({
+      status: 400,
+      msg: "400 Bad Request: no votes found!",
+    });
+  }
+  if (typeof votes !== "number") {
+    return Promise.reject({
+      status: 400,
+      msg: "400 Bad Request: votes have to be a number",
+    });
+  }
+  return db
+    .query(
+      "UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *;",
+      [id, votes]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
