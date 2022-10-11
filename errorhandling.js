@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-exports.clientErrorHandler = (err, req, res, next) => {
+exports.errorHandler = (err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
   } else {
@@ -21,7 +21,7 @@ exports.psqlErrorHandler = (err, req, res, next) => {
   }
 };
 
-exports.handlesInternalErr = (err, req, res, next) => {
+exports.handlesInternalError = (err, req, res, next) => {
   if (err.status === 500) {
     res.status(500).send({ msg: "500 Internal Server Error" });
   }

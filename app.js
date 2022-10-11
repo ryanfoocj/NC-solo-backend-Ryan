@@ -1,20 +1,28 @@
 const express = require("express");
 const app = express();
 const {
-  clientErrorHandler,
+  errorHandler,
   psqlErrorHandler,
   handler404,
-  handlesInternalErr,
+  handlesInternalError,
 } = require("./errorhandling");
-const { getTopics, getArticleById, getUsers } = require("./controllers");
+const {
+  getTopics,
+  getArticleById,
+  getUsers,
+  patchArticleById,
+} = require("./controllers");
+
+app.use(express.json());
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/users", getUsers);
+app.patch("/api/articles/:article_id", patchArticleById);
 
 app.all("/api/*", handler404);
-app.use(clientErrorHandler);
+app.use(errorHandler);
 app.use(psqlErrorHandler);
-app.use(handlesInternalErr);
+app.use(handlesInternalError);
 
 module.exports = app;
