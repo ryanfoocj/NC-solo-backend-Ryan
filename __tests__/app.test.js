@@ -61,6 +61,22 @@ describe("GET: /api/articles/:article_id should return an article corresponding 
         );
       });
   });
+  test.only("200: article with 0 comments should still return a comment count", () => {
+    return request(app)
+      .get("/api/articles/4")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.length).toBe(1);
+        const article = response.body[0];
+        expect(Array.isArray(article)).toBe(false);
+        expect(typeof article).toBe("object");
+        expect(article).toEqual(
+          expect.objectContaining({
+            comment_count: 0,
+          })
+        );
+      });
+  });
   test("400: should handle a bad request and return appropriate message", () => {
     return request(app)
       .get("/api/articles/bird")
