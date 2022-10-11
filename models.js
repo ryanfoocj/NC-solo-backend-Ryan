@@ -6,6 +6,14 @@ exports.fetchTopics = () => {
   });
 };
 
+exports.fetchArticles = () => {
+  return db
+    .query("SELECT * FROM articles ORDER BY created_at;")
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
 exports.fetchArticleById = (id) => {
   return db
     .query(

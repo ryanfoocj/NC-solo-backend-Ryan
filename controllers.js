@@ -1,5 +1,6 @@
 const {
   fetchTopics,
+  fetchArticles,
   fetchArticleById,
   updateArticle,
   fetchUsers,
@@ -13,6 +14,12 @@ exports.getTopics = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.getArticles = (req, res, next) => {
+  fetchArticles().then((articles) => {
+    res.status(200).send(articles);
+  });
 };
 
 exports.getArticleById = (req, res, next) => {

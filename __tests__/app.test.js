@@ -61,7 +61,7 @@ describe("GET: /api/articles/:article_id should return an article corresponding 
         );
       });
   });
-  test.only("200: article with 0 comments should still return a comment count", () => {
+  test("200: article with 0 comments should still return a comment count", () => {
     return request(app)
       .get("/api/articles/4")
       .expect(200)
@@ -157,6 +157,18 @@ describe("PATCH: /api/articles/:article_id should update corresponding article w
           body: { msg },
         } = response;
         expect(msg).toBe("400 Bad Request: votes have to be a number");
+      });
+  });
+});
+
+describe("GET: /api/articles should return an array of article objects sorted by descending date and takes a topic query", () => {
+  test("should return an array of objects that are sorted by date in descending order ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body;
+        expect(articles).toBeSortedBy("created_at");
       });
   });
 });
