@@ -17,9 +17,7 @@ exports.fetchArticles = (topic) => {
     queryStr += " WHERE topic = $1 ";
     queryValue.push(topic);
   }
-
-  queryStr += ` GROUP BY articles.article_id
-  ORDER BY created_at;`;
+  queryStr += " GROUP BY articles.article_id ORDER BY created_at;";
 
   return db.query(queryStr, queryValue).then(({ rows }) => {
     return rows;

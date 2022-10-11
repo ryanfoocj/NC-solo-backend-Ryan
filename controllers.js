@@ -5,6 +5,7 @@ const {
   updateArticle,
   fetchUsers,
 } = require("./models");
+const { checkTopicExists } = require("./db/seeds/utils");
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -17,11 +18,17 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  if (req.query) {
+  if (req.query.topic) {
     const topic = req.query.topic;
-    fetchArticles(topic).then((articles) => {
-      res.status(200).send(articles);
-    });
+    const promises = [checkTopicExists(topic), fetchArticles(topic)];
+    Promise.all(promises)
+      .then((response) => {
+        const articles = response[1];
+        res.status(200).send(articles);
+      })
+      .catch((err) => {
+        next(err);
+      });
   } else {
     fetchArticles().then((articles) => {
       res.status(200).send(articles);
