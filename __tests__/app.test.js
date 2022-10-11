@@ -51,8 +51,8 @@ describe("app", () => {
           .get("/api/articles/1")
           .expect(200)
           .then((response) => {
-            const article = response.body[0];
             expect(response.body.length).toBe(1);
+            const article = response.body[0];
             expect(Array.isArray(article)).toBe(false);
             expect(typeof article).toBe("object");
             expect(article).toEqual({
@@ -91,3 +91,23 @@ describe("app", () => {
     });
   });
 });
+
+/* describe("app", () => {
+  describe("/api", () => {
+    describe("PATCH: /api/articles/:article_id", () => {
+      test("should return an article object with updated data", () => {
+        const newVote = { inc_votes: 50 };
+        return request(app)
+          .patch("/api/articles/2")
+          .send(newVote)
+          .expect(200)
+          .then((response) => {
+            expect(response.body.length).toBe(1);
+            const article = response[0];
+            expect(Array.isArray(article)).toBe(false);
+            expect(typeof article).toBe("object");
+          });
+      });
+    });
+  });
+}); */

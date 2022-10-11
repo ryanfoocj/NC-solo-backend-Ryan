@@ -20,3 +20,5 @@ exports.fetchArticleById = (id) => {
       return article;
     });
 };
+
+exports.updateArticle = () => {};

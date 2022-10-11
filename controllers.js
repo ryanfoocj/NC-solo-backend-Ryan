@@ -1,4 +1,4 @@
-const { fetchTopics, fetchArticleById } = require("./models");
+const { fetchTopics, fetchArticleById, updateArticle } = require("./models");
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -19,4 +19,8 @@ exports.getArticleById = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.patchArticleById = () => {
+  updateArticle().then((article) => {});
 };
