@@ -37,7 +37,7 @@ describe("GET: /api/topics should return an array of topic objects", () => {
   });
 });
 
-describe("GET: /api/articles/:article_id", () => {
+describe("GET: /api/articles/:article_id should return an article corresponding to id parameter", () => {
   test("200: should return an article that matches test data, including the joined comment count", () => {
     return request(app)
       .get("/api/articles/1")
@@ -47,41 +47,18 @@ describe("GET: /api/articles/:article_id", () => {
         const article = response.body[0];
         expect(Array.isArray(article)).toBe(false);
         expect(typeof article).toBe("object");
-        expect(article.comment_count).toBe(11);
-        expect(article).toEqual({
-          article_id: expect.any(Number),
-          title: expect.any(String),
-          topic: expect.any(String),
-          author: expect.any(String),
-          body: expect.any(String),
-          created_at: expect.any(String),
-          comment_count: expect.any(Number),
-          votes: expect.any(Number),
-        });
-      });
-  });
-});
-
-describe("GET: /api/articles/:article_id should return an article corresponding to id parameter", () => {
-  test("200: should return an article that matches test data", () => {
-    return request(app)
-      .get("/api/articles/1")
-      .expect(200)
-      .then((response) => {
-        const article = response.body[0];
-        expect(response.body.length).toBe(1);
-        expect(Array.isArray(article)).toBe(false);
-        expect(typeof article).toBe("object");
-        expect(article).toEqual({
-          article_id: expect.any(Number),
-          title: expect.any(String),
-          topic: expect.any(String),
-          author: expect.any(String),
-          body: expect.any(String),
-          created_at: expect.any(String),
-          comment_count: expect.any(Number),
-          votes: expect.any(Number),
-        });
+        expect(article).toEqual(
+          expect.objectContaining({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: expect.any(String),
+            created_at: expect.any(String),
+            comment_count: 11,
+            votes: 100,
+          })
+        );
       });
   });
   test("400: should handle a bad request and return appropriate message", () => {
