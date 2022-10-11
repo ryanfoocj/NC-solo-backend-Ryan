@@ -169,6 +169,36 @@ describe("GET: /api/articles should return an array of article objects sorted by
       .then((response) => {
         const articles = response.body;
         expect(articles).toBeSortedBy("created_at");
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              comment_count: expect.any(Number),
+              topic: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+  test("should accept an optional topic query which filters out articles unrelated to topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body;
+        expect(articles).toBeSortedBy("created_at");
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: "cats",
+            })
+          );
+        });
       });
   });
 });

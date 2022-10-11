@@ -6,12 +6,24 @@ exports.fetchTopics = () => {
   });
 };
 
-exports.fetchArticles = () => {
-  return db
-    .query("SELECT * FROM articles ORDER BY created_at;")
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.fetchArticles = (topic) => {
+  let queryStr = `SELECT articles.*, COUNT(articles.article_id) ::int AS comment_count 
+  FROM articles 
+  LEFT JOIN comments 
+  ON comments.article_id = articles.article_id `;
+  const queryValue = [];
+
+  if (topic) {
+    queryStr += " WHERE topic = $1 ";
+    queryValue.push(topic);
+  }
+
+  queryStr += ` GROUP BY articles.article_id
+  ORDER BY created_at;`;
+
+  return db.query(queryStr, queryValue).then(({ rows }) => {
+    return rows;
+  });
 };
 
 exports.fetchArticleById = (id) => {

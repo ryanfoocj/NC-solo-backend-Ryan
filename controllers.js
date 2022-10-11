@@ -17,9 +17,16 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles().then((articles) => {
-    res.status(200).send(articles);
-  });
+  if (req.query) {
+    const topic = req.query.topic;
+    fetchArticles(topic).then((articles) => {
+      res.status(200).send(articles);
+    });
+  } else {
+    fetchArticles().then((articles) => {
+      res.status(200).send(articles);
+    });
+  }
 };
 
 exports.getArticleById = (req, res, next) => {
