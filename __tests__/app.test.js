@@ -121,7 +121,7 @@ describe("GET: /api/articles/:article_id/comments should return an array of comm
         expect(response.body).toEqual([]);
       });
   });
-  test.only("404: an article without comments should return an empty array", () => {
+  xtest("404: an article without comments should return an empty array", () => {
     return request(app)
       .get("/api/articles/1000/comments")
       .expect(404)
