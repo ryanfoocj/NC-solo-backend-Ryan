@@ -2,10 +2,11 @@ const {
   fetchTopics,
   fetchArticles,
   fetchArticleById,
+  fetchArticleComments,
   updateArticle,
   fetchUsers,
 } = require("./models");
-const { checkTopicExists } = require("./db/seeds/utils");
+const { checkTopicExists, checkArticleExists } = require("./db/seeds/utils");
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -38,15 +39,29 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  fetchArticleById(article_id)
-    .then((article) => {
-      res.status(200).send([article]);
+  checkArticleExists(article_id)
+    .then(() => {
+      fetchArticleById(article_id).then((article) => {
+        res.status(200).send([article]);
+      });
     })
     .catch((err) => {
       next(err);
     });
 };
 
+exports.getArticleComments = (req, res, next) => {
+  const { article_id } = req.params;
+  checkArticleExists(article_id)
+    .then(() => {
+      fetchArticleComments(article_id).then((comments) => {
+        res.status(200).send(comments);
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 exports.getUsers = (req, res, next) => {
   fetchUsers()
     .then((users) => {
@@ -60,10 +75,13 @@ exports.getUsers = (req, res, next) => {
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-
-  updateArticle(article_id, inc_votes)
-    .then((article) => {
-      res.status(200).send(article);
+  const promises = [
+    checkArticleExists(article_id),
+    updateArticle(article_id, inc_votes),
+  ];
+  Promise.all(promises)
+    .then((response) => {
+      res.status(200).send(response[1]);
     })
     .catch((err) => {
       next(err);

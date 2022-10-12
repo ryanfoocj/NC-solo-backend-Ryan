@@ -52,6 +52,20 @@ exports.fetchArticleById = (id) => {
     });
 };
 
+exports.fetchArticleComments = (id) => {
+  return db
+    .query(
+      `SELECT author, body, comment_id, created_at, votes 
+      FROM comments
+      WHERE article_id = $1
+      ORDER BY created_at Desc;`,
+      [id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
 exports.fetchUsers = () => {
   return db.query("SELECT * FROM users;").then(({ rows: users }) => {
     return users;

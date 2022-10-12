@@ -2,6 +2,8 @@ const {
   convertTimestampToDate,
   createRef,
   formatComments,
+  checkArticleExists,
+  checkTopicExists,
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
@@ -100,5 +102,50 @@ describe("formatComments", () => {
     const comments = [{ created_at: timestamp }];
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
+  });
+});
+
+describe("checkTopicExists", () => {
+  test("should reject a promise when topic does not exist", async () => {
+    await expect(checkTopicExists("fish")).toReject();
+  });
+
+  test("should return error with message when topic does not exist", async () => {
+    await checkTopicExists("fish").catch((err) => {
+      expect(err.msg).toBe("404: Topic not found");
+    });
+  });
+
+  test("should resolve when topic exists ", async () => {
+    await expect(checkTopicExists("mitch")).toResolve();
+  });
+  test("should not return anything else with promise when promise resolves", async () => {
+    const input = "cats";
+    const result = await checkTopicExists(input);
+
+    expect(result).toBe(undefined);
+  });
+});
+
+describe("checkArticleExists", () => {
+  test("should reject a promise when article does not exist ", async () => {
+    await expect(checkArticleExists(700)).toReject();
+  });
+
+  test("should return error with message when article does not exist", async () => {
+    await checkArticleExists(900).catch((err) => {
+      expect(err.msg).toBe("404: Article not found");
+    });
+  });
+
+  test("should resolve when article exists ", async () => {
+    await expect(checkArticleExists(1)).toResolve();
+  });
+
+  test("should not return anything else with promise when promise resolves", async () => {
+    const input = 1;
+    const result = await checkArticleExists(input);
+
+    expect(result).toBe(undefined);
   });
 });
