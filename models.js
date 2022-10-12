@@ -7,7 +7,14 @@ exports.fetchTopics = () => {
 };
 
 exports.fetchArticles = (topic) => {
-  let queryStr = `SELECT articles.*, COUNT(articles.article_id) ::int AS comment_count 
+  let queryStr = `SELECT 
+  articles.article_id,
+  articles.title,
+  articles.author,
+  articles.created_at,
+  articles.topic,
+  articles.votes,
+  COUNT(articles.article_id) ::int AS comment_count 
   FROM articles 
   LEFT JOIN comments 
   ON comments.article_id = articles.article_id `;

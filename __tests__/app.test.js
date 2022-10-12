@@ -161,13 +161,14 @@ describe("PATCH: /api/articles/:article_id should update corresponding article w
   });
 });
 
-describe("GET: /api/articles should return an array of article objects sorted by descending date and takes a topic query", () => {
+describe.only("GET: /api/articles should return an array of article objects sorted by descending date and takes a topic query", () => {
   test("200: should return an array of objects that are sorted by date in descending order by default ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then((response) => {
         const articles = response.body;
+        expect(articles.length).toBe(12);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
           expect(article).toEqual(
@@ -175,7 +176,6 @@ describe("GET: /api/articles should return an array of article objects sorted by
               article_id: expect.any(Number),
               title: expect.any(String),
               author: expect.any(String),
-              body: expect.any(String),
               created_at: expect.any(String),
               comment_count: expect.any(Number),
               topic: expect.any(String),
@@ -191,6 +191,7 @@ describe("GET: /api/articles should return an array of article objects sorted by
       .expect(200)
       .then((response) => {
         const articles = response.body;
+        expect(articles.length).toBe(1);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
           expect(article).toEqual(
