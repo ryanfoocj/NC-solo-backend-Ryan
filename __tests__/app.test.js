@@ -32,7 +32,7 @@ describe("GET: /api/topics should return an array of topic objects", () => {
         const {
           body: { msg },
         } = response;
-        expect(msg).toBe("404 Route Not Found!");
+        expect(msg).toBe("404: Route Not Found!");
       });
   });
 });
@@ -61,6 +61,22 @@ describe("GET: /api/articles/:article_id should return an article corresponding 
         );
       });
   });
+  test("200: article with 0 comments should still return a comment count", () => {
+    return request(app)
+      .get("/api/articles/4")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.length).toBe(1);
+        const article = response.body[0];
+        expect(Array.isArray(article)).toBe(false);
+        expect(typeof article).toBe("object");
+        expect(article).toEqual(
+          expect.objectContaining({
+            comment_count: 0,
+          })
+        );
+      });
+  });
   test("400: should handle a bad request and return appropriate message", () => {
     return request(app)
       .get("/api/articles/bird")
@@ -69,7 +85,7 @@ describe("GET: /api/articles/:article_id should return an article corresponding 
         const {
           body: { msg },
         } = response;
-        expect(msg).toBe("400 Bad Request!");
+        expect(msg).toBe("400: Bad Request!");
       });
   });
 });
@@ -141,6 +157,68 @@ describe("PATCH: /api/articles/:article_id should update corresponding article w
           body: { msg },
         } = response;
         expect(msg).toBe("400 Bad Request: votes have to be a number");
+      });
+  });
+});
+
+describe.only("GET: /api/articles should return an array of article objects sorted by descending date and takes a topic query", () => {
+  test("200: should return an array of objects that are sorted by date in descending order by default ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body;
+        expect(articles.length).toBe(12);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              comment_count: expect.any(Number),
+              topic: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+  test("200: should accept an optional topic query which filters out articles unrelated to topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body;
+        expect(articles.length).toBe(1);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: "cats",
+            })
+          );
+        });
+      });
+  });
+  test("404: returns error if topic query does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=fish")
+      .expect(404)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("404: Topic not found");
+      });
+  });
+  test("returns empty array if topic exists but has no associated articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toEqual([]);
       });
   });
 });

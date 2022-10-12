@@ -6,11 +6,36 @@ exports.fetchTopics = () => {
   });
 };
 
+exports.fetchArticles = (topic) => {
+  let queryStr = `SELECT 
+  articles.article_id,
+  articles.title,
+  articles.author,
+  articles.created_at,
+  articles.topic,
+  articles.votes,
+  COUNT(articles.article_id) ::int AS comment_count 
+  FROM articles 
+  LEFT JOIN comments 
+  ON comments.article_id = articles.article_id `;
+  const queryValue = [];
+
+  if (topic) {
+    queryStr += " WHERE topic = $1 ";
+    queryValue.push(topic);
+  }
+  queryStr += " GROUP BY articles.article_id ORDER BY created_at Desc;";
+
+  return db.query(queryStr, queryValue).then(({ rows }) => {
+    return rows;
+  });
+};
+
 exports.fetchArticleById = (id) => {
   return db
     .query(
       `SELECT articles.*, COUNT(comments.article_id) ::int AS comment_count FROM articles 
-      JOIN comments ON comments.article_id = articles.article_id 
+      LEFT JOIN comments ON comments.article_id = articles.article_id 
       WHERE articles.article_id = $1 
       GROUP BY articles.article_id;`,
       [id]
