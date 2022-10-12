@@ -24,7 +24,7 @@ exports.formatComments = (comments, idLookup) => {
 };
 
 exports.checkTopicExists = async (topic) => {
-  const dbResult = await db.query("SELECT * FROM articles WHERE topic = $1;", [
+  const dbResult = await db.query("SELECT * FROM topics WHERE slug = $1;", [
     topic,
   ]);
 

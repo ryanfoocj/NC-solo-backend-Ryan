@@ -168,7 +168,7 @@ describe("GET: /api/articles should return an array of article objects sorted by
       .expect(200)
       .then((response) => {
         const articles = response.body;
-        expect(articles).toBeSortedBy("created_at");
+        expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -191,7 +191,7 @@ describe("GET: /api/articles should return an array of article objects sorted by
       .expect(200)
       .then((response) => {
         const articles = response.body;
-        expect(articles).toBeSortedBy("created_at");
+        expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -210,6 +210,14 @@ describe("GET: /api/articles should return an array of article objects sorted by
           body: { msg },
         } = response;
         expect(msg).toBe("404: Topic not found");
+      });
+  });
+  test("returns empty array if topic exists but has no associated articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toEqual([]);
       });
   });
 });
