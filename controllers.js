@@ -5,8 +5,9 @@ const {
   fetchArticleComments,
   updateArticle,
   fetchUsers,
+  createComment,
 } = require("./models");
-const { checkTopicExists, checkArticleExists } = require("./db/seeds/utils");
+const { checkExists } = require("./db/seeds/utils");
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -21,7 +22,10 @@ exports.getTopics = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   if (req.query.topic) {
     const topic = req.query.topic;
-    const promises = [checkTopicExists(topic), fetchArticles(topic)];
+    const promises = [
+      checkExists("topics", "slug", topic),
+      fetchArticles(topic),
+    ];
     Promise.all(promises)
       .then((response) => {
         const articles = response[1];
@@ -39,7 +43,7 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  checkArticleExists(article_id)
+  checkExists("articles", "article_id", article_id)
     .then(() => {
       fetchArticleById(article_id).then((article) => {
         res.status(200).send([article]);
@@ -52,7 +56,7 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
-  checkArticleExists(article_id)
+  checkExists("articles", "article_id", article_id)
     .then(() => {
       fetchArticleComments(article_id).then((comments) => {
         res.status(200).send(comments);
@@ -76,14 +80,26 @@ exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
   const promises = [
-    checkArticleExists(article_id),
+    checkExists("articles", "article_id", article_id),
     updateArticle(article_id, inc_votes),
   ];
   Promise.all(promises)
     .then((response) => {
       res.status(200).send(response[1]);
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
+};
+
+exports.postComment = (req, res, next) => {
+  const { username } = req.body;
+  const { body } = req.body;
+  const { article_id } = req.params;
+
+  checkExists("users", "username", username)
+    .then(() => {
+      createComment(username, body, article_id).then((comment) => {
+        res.status(201).send(comment);
+      });
+    })
+    .catch(next);
 };

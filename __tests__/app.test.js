@@ -284,3 +284,28 @@ describe("GET: /api/articles should return an array of article objects sorted by
       });
   });
 });
+
+describe.only("POST /api/articles/:article_id/comments should create a comment and add it to database", () => {
+  test("should create a new comment object, add it to comments db and respond with the comment", () => {
+    const newComment = {
+      username: "lurker",
+      body: "OMG FIRST COMMENT",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        const comment = response.body;
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+            author: "lurker",
+            body: "OMG FIRST COMMENT",
+            votes: 0,
+          })
+        );
+      });
+  });
+});
