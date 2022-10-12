@@ -285,8 +285,8 @@ describe("GET: /api/articles should return an array of article objects sorted by
   });
 });
 
-describe.only("POST /api/articles/:article_id/comments should create a comment and add it to database", () => {
-  test("should create a new comment object, add it to comments db and respond with the comment", () => {
+describe("POST /api/articles/:article_id/comments should create a comment and add it to database", () => {
+  test("201: should create a new comment object, add it to comments db and respond with the comment", () => {
     const newComment = {
       username: "lurker",
       body: "OMG FIRST COMMENT",
@@ -306,6 +306,23 @@ describe.only("POST /api/articles/:article_id/comments should create a comment a
             votes: 0,
           })
         );
+      });
+  });
+
+  test("400: request with empty body should return bad request", () => {
+    const newComment = {
+      username: "lurker",
+      body: "",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("400: Comment is empty");
       });
   });
 });
