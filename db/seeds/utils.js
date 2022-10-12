@@ -23,6 +23,7 @@ exports.formatComments = (comments, idLookup) => {
   });
 };
 
+//change this function to check for existence of any query when more endpoints are created
 exports.checkTopicExists = async (topic) => {
   const dbResult = await db.query("SELECT * FROM topics WHERE slug = $1;", [
     topic,
@@ -30,5 +31,16 @@ exports.checkTopicExists = async (topic) => {
 
   if (dbResult.rows.length === 0) {
     return Promise.reject({ status: 404, msg: "404: Topic not found" });
+  }
+};
+
+exports.checkArticleExists = async (article_id) => {
+  const dbResult = await db.query(
+    "SELECT * FROM articles WHERE article_id = $1",
+    [article_id]
+  );
+
+  if (dbResult.rows.length === 0) {
+    return Promise.reject({ status: 404, msg: "404: Article not found" });
   }
 };

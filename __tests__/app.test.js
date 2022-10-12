@@ -90,17 +90,46 @@ describe("GET: /api/articles/:article_id should return an article corresponding 
   });
 });
 
-/* describe.only("GET: /api/articles/:article_id/comments should return an array of comments ordered by recency", () => {
-  test("should return an array of comments ordered by recency", () => {
+describe("GET: /api/articles/:article_id/comments should return an array of comments ordered by recency", () => {
+  test("200: should return an array of comments ordered by recency", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body;
+        expect(comments.length).toBe(2);
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+        expect(Array.isArray(comments)).toBe(true);
+        comments.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("200: an article without comments should return an empty array", () => {
     return request(app)
       .get("/api/articles/2/comments")
       .expect(200)
       .then((response) => {
-        const comments = response.body;
-        expect(comments).toBe([]);
+        expect(response.body).toEqual([]);
       });
   });
-}); */
+  test.only("404: an article without comments should return an empty array", () => {
+    return request(app)
+      .get("/api/articles/1000/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body).toEqual([]);
+      });
+  });
+});
 
 describe("GET: /api/users should return an array of all users", () => {
   test("200: should return an array of objects containing users that match test data", () => {
@@ -173,7 +202,7 @@ describe("PATCH: /api/articles/:article_id should update corresponding article w
   });
 });
 
-describe.only("GET: /api/articles should return an array of article objects sorted by descending date and takes a topic query", () => {
+describe("GET: /api/articles should return an array of article objects sorted by descending date and takes a topic query", () => {
   test("200: should return an array of objects that are sorted by date in descending order by default ", () => {
     return request(app)
       .get("/api/articles")
@@ -223,14 +252,6 @@ describe.only("GET: /api/articles should return an array of article objects sort
           body: { msg },
         } = response;
         expect(msg).toBe("404: Topic not found");
-      });
-  });
-  test("returns empty array if topic exists but has no associated articles", () => {
-    return request(app)
-      .get("/api/articles?topic=paper")
-      .expect(200)
-      .then((response) => {
-        expect(response.body).toEqual([]);
       });
   });
 });

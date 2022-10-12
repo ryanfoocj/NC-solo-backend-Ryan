@@ -2,10 +2,11 @@ const {
   fetchTopics,
   fetchArticles,
   fetchArticleById,
+  fetchArticleComments,
   updateArticle,
   fetchUsers,
 } = require("./models");
-const { checkTopicExists } = require("./db/seeds/utils");
+const { checkTopicExists, checkArticleExists } = require("./db/seeds/utils");
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -47,6 +48,13 @@ exports.getArticleById = (req, res, next) => {
     });
 };
 
+exports.getArticleComments = (req, res, next) => {
+  const { article_id } = req.params;
+
+  fetchArticleComments(article_id).then((comments) => {
+    res.status(200).send(comments);
+  });
+};
 exports.getUsers = (req, res, next) => {
   fetchUsers()
     .then((users) => {
