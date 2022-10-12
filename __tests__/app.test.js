@@ -88,6 +88,18 @@ describe("GET: /api/articles/:article_id should return an article corresponding 
         expect(msg).toBe("400: Bad Request!");
       });
   });
+
+  test("404: returns an error if article does not exist", () => {
+    return request(app)
+      .get("/api/articles/7000")
+      .expect(404)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("404: Article not found");
+      });
+  });
 });
 
 describe("GET: /api/articles/:article_id/comments should return an array of comments ordered by recency", () => {
@@ -121,12 +133,15 @@ describe("GET: /api/articles/:article_id/comments should return an array of comm
         expect(response.body).toEqual([]);
       });
   });
-  xtest("404: an article without comments should return an empty array", () => {
+  test("404: request for an article that does not exist should return error message", () => {
     return request(app)
       .get("/api/articles/1000/comments")
       .expect(404)
       .then((response) => {
-        expect(response.body).toEqual([]);
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toEqual("404: Article not found");
       });
   });
 });
@@ -187,7 +202,7 @@ describe("PATCH: /api/articles/:article_id should update corresponding article w
       });
   });
 
-  test("400: should handle a request that contains a votes key without a number ", () => {
+  test("400: request for an article that does not exist should return error message ", () => {
     const newVote = { inc_votes: "apple" };
     return request(app)
       .patch("/api/articles/1")
@@ -198,6 +213,20 @@ describe("PATCH: /api/articles/:article_id should update corresponding article w
           body: { msg },
         } = response;
         expect(msg).toBe("400 Bad Request: votes have to be a number");
+      });
+  });
+
+  test("404: request for an article that does not exist should return error message ", () => {
+    const newVote = { inc_votes: 100 };
+    return request(app)
+      .patch("/api/articles/1000")
+      .send(newVote)
+      .expect(404)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("404: Article not found");
       });
   });
 });
