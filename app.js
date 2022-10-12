@@ -13,8 +13,6 @@ const {
   getUsers,
   patchArticleById,
 } = require("./controllers");
-const articles = require("./db/data/test-data/articles");
-const comments = require("./db/data/test-data/comments");
 
 app.use(express.json());
 

@@ -90,6 +90,18 @@ describe("GET: /api/articles/:article_id should return an article corresponding 
   });
 });
 
+/* describe.only("GET: /api/articles/:article_id/comments should return an array of comments ordered by recency", () => {
+  test("should return an array of comments ordered by recency", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((response) => {
+        const comments = response.body;
+        expect(comments).toBe([]);
+      });
+  });
+}); */
+
 describe("GET: /api/users should return an array of all users", () => {
   test("200: should return an array of objects containing users that match test data", () => {
     return request(app)
@@ -161,8 +173,8 @@ describe("PATCH: /api/articles/:article_id should update corresponding article w
   });
 });
 
-describe("GET: /api/articles should return an array of article objects sorted by descending date and takes a topic query", () => {
-  test("200: should return an array of objects that are sorted by date in descending order by default ", () => {
+describe("GET: /api/articles should return an array of article objects sorted by recency and takes a topic query", () => {
+  test("200: should return an array of objects that are sorted by recency ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
