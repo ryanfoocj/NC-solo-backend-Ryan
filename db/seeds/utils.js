@@ -49,5 +49,7 @@ exports.checkExists = async (table, params, value) => {
 };
 
 exports.checkColumnExists = async (column, table) => {
-  const queryStr = format("SELECT %I FROM %I;");
+  const queryStr = format("SELECT %I FROM %I;", column, table);
+
+  return await db.query(queryStr);
 };

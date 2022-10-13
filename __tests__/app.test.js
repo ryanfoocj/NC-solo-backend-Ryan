@@ -285,12 +285,12 @@ describe("GET: /api/articles should return an array of article objects sorted by
   });
   test("200: should return an array of objects that are sorted by a query ", () => {
     return request(app)
-      .get("/api/articles?topic=mitch&sort_by=comment_count")
+      .get("/api/articles?topic=mitch&sort_by=votes")
       .expect(200)
       .then((response) => {
         const articles = response.body;
         expect(articles.length).toBe(11);
-        expect(articles).toBeSortedBy("comment_count", { descending: true });
+        expect(articles).toBeSortedBy("votes", { descending: true });
       });
   });
 
@@ -305,14 +305,15 @@ describe("GET: /api/articles should return an array of article objects sorted by
       });
   });
 
-  xtest("400: should return a bad request if sort_by column doesn't exist", () => {
+  test("404: should return a bad request if sort_by column doesn't exist", () => {
     return request(app)
       .get("/api/articles?topic=mitch&sort_by=chicken&order=asc")
-      .expect(200)
+      .expect(404)
       .then((response) => {
-        const articles = response.body;
-        expect(articles.length).toBe(11);
-        expect(articles).toBeSortedBy("votes");
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("404: Column not found");
       });
   });
 });

@@ -7,7 +7,7 @@ const {
   fetchUsers,
   createComment,
 } = require("./models");
-const { checkExists } = require("./db/seeds/utils");
+const { checkExists, checkColumnExists } = require("./db/seeds/utils");
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -25,6 +25,10 @@ exports.getArticles = (req, res, next) => {
       checkExists("topics", "slug", req.query.topic),
       fetchArticles(req.query),
     ];
+
+    if (req.query.sort_by) {
+      promises.push(checkColumnExists(req.query.sort_by, "articles"));
+    }
     Promise.all(promises)
       .then((response) => {
         const articles = response[1];
