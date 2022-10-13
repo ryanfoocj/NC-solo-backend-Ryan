@@ -1,16 +1,16 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "json body that displays all the available endpoints of the api"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "returns an array of all topics",
     "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
+    "description": "returns an array of all articles that can be filtered and ordered through queries",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
@@ -22,6 +22,18 @@
           "created_at": 1527695953341
         }
       ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "returns an article object that contains metadata ",
+    "queries": [],
+    "exampleResponse": {
+      "title": "Running a Node App",
+      "topic": "coding",
+      "author": "jessjelly",
+      "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+      "created_at": 1604728980000,
+      "votes": 0
     }
   }
 }
