@@ -94,3 +94,14 @@ exports.updateArticle = (id, votes) => {
       return rows[0];
     });
 };
+
+exports.createComment = (author, body, id) => {
+  return db
+    .query(
+      "INSERT INTO comments (author, body, article_id, votes) VALUES ($1, $2, $3 , 0) RETURNING *;",
+      [author, body, id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};

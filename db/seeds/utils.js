@@ -1,4 +1,5 @@
 const db = require("../connection");
+const format = require("pg-format");
 
 exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {
   if (!created_at) return { ...otherProperties };
@@ -23,24 +24,26 @@ exports.formatComments = (comments, idLookup) => {
   });
 };
 
-//change this function to check for existence of any query when more endpoints are created
-exports.checkTopicExists = async (topic) => {
-  const dbResult = await db.query("SELECT * FROM topics WHERE slug = $1;", [
-    topic,
-  ]);
-
-  if (dbResult.rows.length === 0) {
-    return Promise.reject({ status: 404, msg: "404: Topic not found" });
+exports.checkExists = async (table, params, value) => {
+  if (!table || !params || !value) {
+    return Promise.reject({ status: 400, msg: "400: Request is missing info" });
   }
-};
-
-exports.checkArticleExists = async (article_id) => {
-  const dbResult = await db.query(
-    "SELECT * FROM articles WHERE article_id = $1",
-    [article_id]
-  );
+  const queryStr = format("SELECT * FROM %I WHERE %I = $1", table, params);
+  const dbResult = await db.query(queryStr, [value]);
 
   if (dbResult.rows.length === 0) {
-    return Promise.reject({ status: 404, msg: "404: Article not found" });
+    let message = "";
+    switch (table) {
+      case "articles":
+        message = "404: Article not found";
+        break;
+      case "users":
+        message = "404: User not found";
+        break;
+      case "topics":
+        message = "404: Topic not found";
+        break;
+    }
+    return Promise.reject({ status: 404, msg: message });
   }
 };

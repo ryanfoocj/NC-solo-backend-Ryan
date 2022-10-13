@@ -284,3 +284,79 @@ describe("GET: /api/articles should return an array of article objects sorted by
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments should create a comment and add it to database", () => {
+  test("201: should create a new comment object, add it to comments db and respond with the comment", () => {
+    const newComment = {
+      username: "lurker",
+      body: "OMG FIRST COMMENT",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        const comment = response.body;
+        expect(comment).toEqual(
+          expect.objectContaining({
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+            author: "lurker",
+            body: "OMG FIRST COMMENT",
+            votes: 0,
+          })
+        );
+      });
+  });
+
+  test("400: request without body property or is an empty comment should return bad request", () => {
+    const newComment = {
+      username: "lurker",
+      body: "",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("400: Comment is empty");
+      });
+  });
+
+  test("400: request without username property should return bad request", () => {
+    const newComment = {
+      user: "lurker",
+      body: "Hehehe",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("400: Request is missing info");
+      });
+  });
+
+  test("404: request with a non-existent username ", () => {
+    const newComment = {
+      username: "randomMan",
+      body: "Hello hello hello",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("404: User not found");
+      });
+  });
+});
