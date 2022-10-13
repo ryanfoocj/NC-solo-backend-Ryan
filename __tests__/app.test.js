@@ -202,7 +202,7 @@ describe("PATCH: /api/articles/:article_id should update corresponding article w
       });
   });
 
-  test("400: request for an article that does not exist should return error message ", () => {
+  test("400: request with wrong data type under votes should return an error message", () => {
     const newVote = { inc_votes: "apple" };
     return request(app)
       .patch("/api/articles/1")
