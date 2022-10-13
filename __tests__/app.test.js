@@ -283,6 +283,15 @@ describe("GET: /api/articles should return an array of article objects sorted by
         expect(msg).toBe("404: Topic not found");
       });
   });
+
+  test("200: should return an empty array if topic exists but no article related to it", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toEqual([]);
+      });
+  });
   test("200: should return an array of objects that are sorted by a query ", () => {
     return request(app)
       .get("/api/articles?topic=mitch&sort_by=votes")
@@ -301,19 +310,31 @@ describe("GET: /api/articles should return an array of article objects sorted by
       .then((response) => {
         const articles = response.body;
         expect(articles.length).toBe(11);
-        expect(articles).toBeSortedBy("votes");
+        expect(articles).toBeSortedBy("votes", { ascending: true });
       });
   });
 
-  test("404: should return a bad request if sort_by column doesn't exist", () => {
+  test("400: should return a bad request if sort_by column doesn't exist", () => {
     return request(app)
       .get("/api/articles?topic=mitch&sort_by=chicken&order=asc")
-      .expect(404)
+      .expect(400)
       .then((response) => {
         const {
           body: { msg },
         } = response;
-        expect(msg).toBe("404: Column not found");
+        expect(msg).toBe("400: Column not found");
+      });
+  });
+
+  test("400: should return a bad request if order query is invalid", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&order=potato")
+      .expect(400)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("400: Order is invalid");
       });
   });
 });

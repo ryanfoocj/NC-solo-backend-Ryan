@@ -56,3 +56,9 @@ exports.checkColumnExists = async (column, table) => {
 
   return await db.query(queryStr);
 };
+
+exports.checkOrder = (order) => {
+  if (order !== "desc" && order !== "asc") {
+    return Promise.reject({ status: 400, msg: "400: Order is invalid" });
+  }
+};

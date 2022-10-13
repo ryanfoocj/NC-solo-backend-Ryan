@@ -8,7 +8,11 @@ const {
   createComment,
   removeComment,
 } = require("./models");
-const { checkExists, checkColumnExists } = require("./db/seeds/utils");
+const {
+  checkExists,
+  checkColumnExists,
+  checkOrder,
+} = require("./db/seeds/utils");
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -30,6 +34,10 @@ exports.getArticles = (req, res, next) => {
     if (req.query.sort_by) {
       promises.push(checkColumnExists(req.query.sort_by, "articles"));
     }
+    if (req.query.order) {
+      promises.push(checkOrder(req.query.order));
+    }
+
     Promise.all(promises)
       .then((response) => {
         const articles = response[1];
