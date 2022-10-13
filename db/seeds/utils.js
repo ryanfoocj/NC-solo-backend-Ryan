@@ -43,7 +43,22 @@ exports.checkExists = async (table, params, value) => {
       case "topics":
         message = "404: Topic not found";
         break;
+      case "comments":
+        message = "404: Comment not found";
+        break;
     }
     return Promise.reject({ status: 404, msg: message });
+  }
+};
+
+exports.checkColumnExists = async (column, table) => {
+  const queryStr = format("SELECT %I FROM %I;", column, table);
+
+  return await db.query(queryStr);
+};
+
+exports.checkOrder = (order) => {
+  if (order !== "desc" && order !== "asc") {
+    return Promise.reject({ status: 400, msg: "400: Order is invalid" });
   }
 };

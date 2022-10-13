@@ -16,6 +16,8 @@ exports.handler404 = (req, res) => {
 exports.psqlErrorHandler = (err, req, res, next) => {
   if (err.code === "22P02") {
     res.status(400).send({ msg: "400: Bad Request!" });
+  } else if (err.code === "42703") {
+    res.status(400).send({ msg: "400: Column not found" });
   } else {
     next(err);
   }

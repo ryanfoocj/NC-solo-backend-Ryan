@@ -283,6 +283,60 @@ describe("GET: /api/articles should return an array of article objects sorted by
         expect(msg).toBe("404: Topic not found");
       });
   });
+
+  test("200: should return an empty array if topic exists but no article related to it", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toEqual([]);
+      });
+  });
+  test("200: should return an array of objects that are sorted by a query ", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=votes")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body;
+        expect(articles.length).toBe(11);
+        expect(articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+
+  test("200: should return an array of objects that are sorted by a query and order", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=votes&order=asc")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body;
+        expect(articles.length).toBe(11);
+        expect(articles).toBeSortedBy("votes", { ascending: true });
+      });
+  });
+
+  test("400: should return a bad request if sort_by column doesn't exist", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=chicken&order=asc")
+      .expect(400)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("400: Column not found");
+      });
+  });
+
+  test("400: should return a bad request if order query is invalid", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&order=potato")
+      .expect(400)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("400: Order is invalid");
+      });
+  });
 });
 
 describe("POST /api/articles/:article_id/comments should create a comment and add it to database", () => {
@@ -357,6 +411,29 @@ describe("POST /api/articles/:article_id/comments should create a comment and ad
           body: { msg },
         } = response;
         expect(msg).toBe("404: User not found");
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id should delete a comment from database and return to user", () => {
+  test("202 comment is deleted from database and returned as a response object", () => {
+    return request(app)
+      .delete("/api/comments/3")
+      .expect(202)
+      .then((response) => {
+        const comment = response.body;
+      });
+  });
+
+  test("404 if comment_id cannot be found ", () => {
+    return request(app)
+      .delete("/api/comments/9000")
+      .expect(404)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("404: Comment not found");
       });
   });
 });

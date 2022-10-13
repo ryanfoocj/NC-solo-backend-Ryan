@@ -6,8 +6,13 @@ const {
   updateArticle,
   fetchUsers,
   createComment,
+  removeComment,
 } = require("./models");
-const { checkExists } = require("./db/seeds/utils");
+const {
+  checkExists,
+  checkColumnExists,
+  checkOrder,
+} = require("./db/seeds/utils");
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -20,12 +25,19 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  if (req.query.topic) {
-    const topic = req.query.topic;
+  if (Object.keys(req.query).length > 0) {
     const promises = [
-      checkExists("topics", "slug", topic),
-      fetchArticles(topic),
+      checkExists("topics", "slug", req.query.topic),
+      fetchArticles(req.query),
     ];
+
+    if (req.query.sort_by) {
+      promises.push(checkColumnExists(req.query.sort_by, "articles"));
+    }
+    if (req.query.order) {
+      promises.push(checkOrder(req.query.order));
+    }
+
     Promise.all(promises)
       .then((response) => {
         const articles = response[1];
@@ -35,7 +47,7 @@ exports.getArticles = (req, res, next) => {
         next(err);
       });
   } else {
-    fetchArticles().then((articles) => {
+    fetchArticles(req.query).then((articles) => {
       res.status(200).send(articles);
     });
   }
@@ -104,6 +116,17 @@ exports.postComment = (req, res, next) => {
     .then(() => {
       createComment(username, body, article_id).then((comment) => {
         res.status(201).send(comment);
+      });
+    })
+    .catch(next);
+};
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  checkExists("comments", "comment_id", comment_id)
+    .then(() => {
+      removeComment(comment_id).then((comment) => {
+        res.status(202).send(comment);
       });
     })
     .catch(next);

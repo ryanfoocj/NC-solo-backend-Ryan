@@ -1,3 +1,4 @@
+const format = require("pg-format");
 const db = require("./db/connection");
 
 exports.fetchTopics = () => {
@@ -6,7 +7,7 @@ exports.fetchTopics = () => {
   });
 };
 
-exports.fetchArticles = (topic) => {
+exports.fetchArticles = (queries) => {
   let queryStr = `SELECT 
   articles.article_id,
   articles.title,
@@ -20,12 +21,25 @@ exports.fetchArticles = (topic) => {
   ON comments.article_id = articles.article_id `;
   const queryValue = [];
 
+  const { topic, sort_by, order } = queries;
+
   if (topic) {
     queryStr += " WHERE topic = $1 ";
     queryValue.push(topic);
   }
-  queryStr += " GROUP BY articles.article_id ORDER BY created_at Desc;";
+  queryStr += "GROUP BY articles.article_id ";
+  if (sort_by) {
+    queryStr += format("ORDER BY %I ", sort_by);
+  } else {
+    queryStr += "ORDER BY created_at ";
+  }
+  if (order) {
+    queryStr += "Asc";
+  } else {
+    queryStr += "Desc";
+  }
 
+  queryStr += ";";
   return db.query(queryStr, queryValue).then(({ rows }) => {
     return rows;
   });
@@ -103,5 +117,13 @@ exports.createComment = (author, body, id) => {
     )
     .then(({ rows }) => {
       return rows[0];
+    });
+};
+
+exports.removeComment = (id) => {
+  return db
+    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *;", [id])
+    .then(({ rows }) => {
+      return rows;
     });
 };
