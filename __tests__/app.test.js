@@ -416,7 +416,7 @@ describe("POST /api/articles/:article_id/comments should create a comment and ad
 });
 
 describe("DELETE /api/comments/:comment_id should delete a comment from database and return to user", () => {
-  test("202 comment is deleted from database and returned as a response object", () => {
+  test("204 comment is deleted from database and returned as a response object", () => {
     return request(app).delete("/api/comments/3").expect(204);
   });
 
