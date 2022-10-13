@@ -20,11 +20,10 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  if (req.query.topic) {
-    const topic = req.query.topic;
+  if (Object.keys(req.query).length > 0) {
     const promises = [
-      checkExists("topics", "slug", topic),
-      fetchArticles(topic),
+      checkExists("topics", "slug", req.query.topic),
+      fetchArticles(req.query),
     ];
     Promise.all(promises)
       .then((response) => {
@@ -35,7 +34,7 @@ exports.getArticles = (req, res, next) => {
         next(err);
       });
   } else {
-    fetchArticles().then((articles) => {
+    fetchArticles(req.query).then((articles) => {
       res.status(200).send(articles);
     });
   }

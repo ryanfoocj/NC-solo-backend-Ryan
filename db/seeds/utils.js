@@ -47,3 +47,7 @@ exports.checkExists = async (table, params, value) => {
     return Promise.reject({ status: 404, msg: message });
   }
 };
+
+exports.checkColumnExists = async (column, table) => {
+  const queryStr = format("SELECT %I FROM %I;");
+};

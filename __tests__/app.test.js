@@ -283,6 +283,38 @@ describe("GET: /api/articles should return an array of article objects sorted by
         expect(msg).toBe("404: Topic not found");
       });
   });
+  test("200: should return an array of objects that are sorted by a query ", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=comment_count")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body;
+        expect(articles.length).toBe(11);
+        expect(articles).toBeSortedBy("comment_count", { descending: true });
+      });
+  });
+
+  test("200: should return an array of objects that are sorted by a query and order", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=votes&order=asc")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body;
+        expect(articles.length).toBe(11);
+        expect(articles).toBeSortedBy("votes");
+      });
+  });
+
+  xtest("400: should return a bad request if sort_by column doesn't exist", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=chicken&order=asc")
+      .expect(200)
+      .then((response) => {
+        const articles = response.body;
+        expect(articles.length).toBe(11);
+        expect(articles).toBeSortedBy("votes");
+      });
+  });
 });
 
 describe("POST /api/articles/:article_id/comments should create a comment and add it to database", () => {
