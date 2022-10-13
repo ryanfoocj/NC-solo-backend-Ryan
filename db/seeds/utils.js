@@ -43,6 +43,9 @@ exports.checkExists = async (table, params, value) => {
       case "topics":
         message = "404: Topic not found";
         break;
+      case "comments":
+        message = "404: Comment not found";
+        break;
     }
     return Promise.reject({ status: 404, msg: message });
   }

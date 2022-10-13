@@ -6,6 +6,7 @@ const {
   updateArticle,
   fetchUsers,
   createComment,
+  removeComment,
 } = require("./models");
 const { checkExists, checkColumnExists } = require("./db/seeds/utils");
 
@@ -107,6 +108,17 @@ exports.postComment = (req, res, next) => {
     .then(() => {
       createComment(username, body, article_id).then((comment) => {
         res.status(201).send(comment);
+      });
+    })
+    .catch(next);
+};
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  checkExists("comments", "comment_id", comment_id)
+    .then(() => {
+      removeComment(comment_id).then((comment) => {
+        res.status(202).send(comment);
       });
     })
     .catch(next);
