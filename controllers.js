@@ -97,7 +97,7 @@ exports.postComment = (req, res, next) => {
 
   checkExists("users", "username", username)
     .then(() => {
-      if (body === "") {
+      if (body === "" || !body) {
         return Promise.reject({ status: 400, msg: "400: Comment is empty" });
       }
     })

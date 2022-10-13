@@ -125,4 +125,9 @@ describe("checkExists", () => {
 
     expect(result).toBe(undefined);
   });
+  test("if any of the parameters is falsy, returns an error message stating info is missing", async () => {
+    await checkExists(undefined, "article_id", 2).catch((err) => {
+      expect(err.msg).toBe("400: Request is missing info");
+    });
+  });
 });

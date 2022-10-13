@@ -309,7 +309,7 @@ describe("POST /api/articles/:article_id/comments should create a comment and ad
       });
   });
 
-  test("400: request with empty body should return bad request", () => {
+  test("400: request without body property or is an empty comment should return bad request", () => {
     const newComment = {
       username: "lurker",
       body: "",
@@ -323,6 +323,40 @@ describe("POST /api/articles/:article_id/comments should create a comment and ad
           body: { msg },
         } = response;
         expect(msg).toBe("400: Comment is empty");
+      });
+  });
+
+  test("400: request without username property should return bad request", () => {
+    const newComment = {
+      user: "lurker",
+      body: "Hehehe",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("400: Request is missing info");
+      });
+  });
+
+  test("404: request with a non-existent username ", () => {
+    const newComment = {
+      username: "randomMan",
+      body: "Hello hello hello",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        const {
+          body: { msg },
+        } = response;
+        expect(msg).toBe("404: User not found");
       });
   });
 });

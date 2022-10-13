@@ -25,6 +25,9 @@ exports.formatComments = (comments, idLookup) => {
 };
 
 exports.checkExists = async (table, params, value) => {
+  if (!table || !params || !value) {
+    return Promise.reject({ status: 400, msg: "400: Request is missing info" });
+  }
   const queryStr = format("SELECT * FROM %I WHERE %I = $1", table, params);
   const dbResult = await db.query(queryStr, [value]);
 
