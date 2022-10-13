@@ -1,5 +1,5 @@
 {
-  "name": "be-nc-news",
+  "name": "nc-news-ryanfoo",
   "version": "1.0.0",
   "description": "bc-nc-news",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
     "prepare": "husky install",
-    "start": "node app.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -39,5 +39,8 @@
       "jest-extended/all",
       "jest-sorted"
     ]
+  },
+  "engines": {
+    "node": "18.8.0"
   }
 }
