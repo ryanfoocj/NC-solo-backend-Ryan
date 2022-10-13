@@ -26,7 +26,6 @@ app.get("/api/articles/:article_id/comments", getArticleComments);
 app.get("/api/users", getUsers);
 app.patch("/api/articles/:article_id", patchArticleById);
 app.post("/api/articles/:article_id/comments", postComment);
-
 app.delete("/api/comments/:comment_id", deleteComment);
 
 app.all("/api/*", handler404);

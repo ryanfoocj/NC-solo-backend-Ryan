@@ -10,16 +10,18 @@
     }
   },
   "GET /api/articles": {
-    "description": "returns an array of all articles that can be filtered and ordered through queries",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "returns an array of all articles objects that can be filtered and ordered through queries",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
+          "article_id": 8,
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
           "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "comment_count": 10,
+          "created_at": 1527695953341,
+          "votes": 90
         }
       ]
     }
@@ -28,12 +30,78 @@
     "description": "returns an article object that contains metadata ",
     "queries": [],
     "exampleResponse": {
+      "article_id": 1,
       "title": "Running a Node App",
       "topic": "coding",
       "author": "jessjelly",
       "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
       "created_at": 1604728980000,
+      "comment_count": 11,
       "votes": 0
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "returns an array of comments associated with given article that contains comment metadata",
+    "queries": [],
+    "exampleResponse": [
+      {
+        "comment_id": 1,
+        "body": "Nobis consequatur animi. Ullam nobis quaerat voluptates veniam.",
+        "votes": 7,
+        "author": "grumpy19",
+        "created_at": 1577890920000
+      },
+      {
+        "comment_id": 2,
+        "body": "Qui sunt sit voluptas repellendus sed. Voluptatem et repellat fugiat. Rerum doloribus eveniet quidem vero aut sint officiis. Dolor facere et et architecto vero qui et perferendis dolorem. Magni quis ratione adipisci error assumenda ut. Id rerum eos facere sit nihil ipsam officia aspernatur odio.",
+        "votes": 3,
+        "author": "grumpy19",
+        "created_at": 1600820280000
+      }
+    ]
+  },
+  "GET /api/users": {
+    "description": "returns an array of user objects ",
+    "queries": [],
+    "exampleResponse": [
+      {
+        "username": "tickle122",
+        "name": "Tom Tickle",
+        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+      },
+      {
+        "username": "grumpy19",
+        "name": "Paul Grump",
+        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/7/78/Mr-Grumpy-3A.PNG/revision/latest?cb=20170707233013"
+      }
+    ]
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "takes a request body and returns a response body of the article with an updated vote count",
+    "queries": [],
+    "exampleResponse": {
+      "article_id": 7,
+      "title": "The Rise Of Thinking Machines: How IBM's Watson Takes On The World",
+      "topic": "coding",
+      "author": "jessjelly",
+      "body": "Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world.",
+      "created_at": 1589418120000,
+      "votes": 100
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "takes a request body and responds with a comment object that has been added to the database",
+    "queries": [],
+    "exampleResponse": {
+      "comment_id": 6,
+      "body": "Rerum voluptatem quam odio facilis quis illo unde. Ex blanditiis optio tenetur sunt. Cumque dolor ducimus et qui officia quasi non illum reiciendis.",
+      "votes": 4,
+      "author": "happyamy2016",
+      "created_at": 1602370980000
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes the comment associated with comment_id and returns a 204 status code with no response body",
+    "queries": []
   }
 }
