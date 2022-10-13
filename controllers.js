@@ -126,7 +126,7 @@ exports.deleteComment = (req, res, next) => {
   checkExists("comments", "comment_id", comment_id)
     .then(() => {
       removeComment(comment_id).then((comment) => {
-        res.status(202).send(comment);
+        res.status(204).send();
       });
     })
     .catch(next);
