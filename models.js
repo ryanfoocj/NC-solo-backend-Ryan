@@ -1,5 +1,12 @@
 const format = require("pg-format");
 const db = require("./db/connection");
+const fs = require("fs/promises");
+
+exports.fetchEndpoints = () => {
+  return fs.readFile("./endpoints.json").then((endpoints) => {
+    return JSON.parse(endpoints);
+  });
+};
 
 exports.fetchTopics = () => {
   return db.query("SELECT * FROM topics;").then(({ rows: topics }) => {

@@ -7,6 +7,11 @@ const db = require("../db/connection");
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
+describe("GET: /api should return a json object of all available endpoints", () => {
+  test("should return json object with endpoints", () => {
+    return request(app).get("/api").expect(200);
+  });
+});
 describe("GET: /api/topics should return an array of topic objects", () => {
   test("200 should respond with an array of topic objects that match test data ", () => {
     return request(app)
