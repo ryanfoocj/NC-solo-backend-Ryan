@@ -1,16 +1,20 @@
 name: Test & Deploy
 on:
   push:
-  branches: -main
+    branches: -main
 
-  jobs:
+jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+  steps:
+    lint:
+      name: Lint
+      runs-on: ubuntu-latest
     steps:
-
-    - name: Checkout Repo
-      uses: actions/checkout@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+  
 
     - name: Use Node.js
     uses: actions/setup-node@v1
