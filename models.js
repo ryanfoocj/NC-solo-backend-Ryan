@@ -34,7 +34,9 @@ exports.fetchArticles = (queries) => {
     queryStr += " WHERE topic = $1 ";
     queryValue.push(topic);
   }
+
   queryStr += "GROUP BY articles.article_id ";
+
   if (sort_by) {
     queryStr += format("ORDER BY %I ", sort_by);
   } else {
