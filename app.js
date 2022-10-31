@@ -1,5 +1,7 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
+
 const {
   errorHandler,
   psqlErrorHandler,
@@ -17,6 +19,7 @@ const {
   deleteComment,
 } = require("./controllers");
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
