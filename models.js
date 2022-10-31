@@ -1,5 +1,12 @@
 const format = require("pg-format");
 const db = require("./db/connection");
+const fs = require("fs/promises");
+
+exports.fetchEndpoints = () => {
+  return fs.readFile("./endpoints.json").then((endpoints) => {
+    return JSON.parse(endpoints);
+  });
+};
 
 exports.fetchTopics = () => {
   return db.query("SELECT * FROM topics;").then(({ rows: topics }) => {
@@ -27,7 +34,9 @@ exports.fetchArticles = (queries) => {
     queryStr += " WHERE topic = $1 ";
     queryValue.push(topic);
   }
+
   queryStr += "GROUP BY articles.article_id ";
+
   if (sort_by) {
     queryStr += format("ORDER BY %I ", sort_by);
   } else {
