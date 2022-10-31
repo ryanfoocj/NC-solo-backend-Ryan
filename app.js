@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 const {
   errorHandler,
@@ -19,6 +20,7 @@ const {
   deleteComment,
 } = require("./controllers");
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api", getEndpoints);
