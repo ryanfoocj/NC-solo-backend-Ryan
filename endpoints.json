@@ -79,6 +79,10 @@
   "PATCH /api/articles/:article_id": {
     "description": "takes a request body and returns a response body of the article with an updated vote count",
     "queries": [],
+    "exampleRequest": {
+      "article_id": 7,
+      "inc_votes": 2
+    },
     "exampleResponse": {
       "article_id": 7,
       "title": "The Rise Of Thinking Machines: How IBM's Watson Takes On The World",
@@ -92,6 +96,7 @@
   "POST /api/articles/:article_id/comments": {
     "description": "takes a request body and responds with a comment object that has been added to the database",
     "queries": [],
+    "exampleRequest": { "username": "john", "body": "Hello" },
     "exampleResponse": {
       "comment_id": 6,
       "body": "Rerum voluptatem quam odio facilis quis illo unde. Ex blanditiis optio tenetur sunt. Cumque dolor ducimus et qui officia quasi non illum reiciendis.",
